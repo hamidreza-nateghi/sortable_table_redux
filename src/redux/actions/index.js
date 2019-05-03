@@ -1,12 +1,9 @@
-let nextTodoId = 0;
+let nextTodoId = 0;  // not a good idea to keep it here! keep it in your redux store!
+// secondly, generate a random ID! Math.floor(Math.random() * 1000)
 export const addTodo = payload => ({
   type: 'ADD_TODO',
   id: nextTodoId++,
   payload
-});
-
-export const sortTodo = () => ({
-  type: 'SORT_TODO'
 });
 
 export const setVisibilityFilter = filter => ({

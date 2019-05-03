@@ -1,104 +1,103 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Modal from './Modal';
-import { addTodo, sortTodo } from './actions';
+import { addTodo } from './redux/actions';
 
 class App extends Component {
   state = {
-    text: '',
-    clicks: 0,
-    showModal: false
+    showModal: false,
+    name: null,
+    protocol: null,
+    port: null,
+    rule: null,
+    status: null,
+    groups: null,
+    list: [],
+    sort: false,
+    sortKey: 'name',
   };
 
-  name = null;
-  protocol = null;
-  port = null;
-  rule = null;
-  status = null;
-  groups = null;
-  list = [];
-
-  onAddNew = () => {
-    this.setState({ showModal: true });
-  }
-
-  onIncrementClicks = () => {
-    this.setState({ showModal: false });
-  }
-
-  onInputChange = e => {
-    e.preventDefault();
-    this.setState({ text: e.target.value });
-  }
+  onChange = (event) => {
+    event.preventDefault();
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
 
   onFormSubmit = e => {
     e.preventDefault();
-    this.props.addItem({
-      name: this.name.value,
-      protocol: this.protocol.value,
-      port: this.port.value,
-      rule: this.rule.value,
-      status: this.status.value,
-      groups: this.groups.value
-    });
-    this.onIncrementClicks();
-  }
+    const { addItem } = this.props;
+    const { name, protocol, port, rule, status, groups } = this.state;
+    addItem({ name, protocol, port, rule, status, groups });
+    this.toggleModal();
+  };
 
-  sortList = () => {
-    this.list = this.props.items;
-    const sortByKey = key => (a, b) => a[key] > b[key]
-    this.list = this.list.sort(sortByKey('name'))
-  }
+  sortList = (sortKey) => {
+    console.log('Lets sort by', sortKey);
+    this.setState({
+      sort: true,
+      sortKey,
+    })
+  };
+
+  toggleModal = () => {
+    this.setState({
+      showModal: !this.state.showModal,
+    })
+  };
+
+  renderModal = () => (
+    <Modal>
+      <div className="ui dimmer modals page transition visible active">
+        <div className='ui fullscreen modal transition visible acitve'>
+          <div className="content">
+            <form className="ui form" onSubmit={this.onFormSubmit}>
+              <div className="field">
+                <label>Name</label>
+                <input type="text" placeholder="Name" name="name"  onChange={this.onChange} />
+              </div>
+              <div className="two fields">
+                <div className="field">
+                  <label>Protocol</label>
+                  <input type="text" placeholder="Protocol" name="protocol"  onChange={this.onChange} /></div>
+                <div className="field">
+                  <label>Port</label>
+                  <input type="text" placeholder="Port" name="port"  onChange={this.onChange} /></div>
+              </div>
+              <div className="two fields">
+                <div className="field">
+                  <label>Rule</label>
+                  <input type="text" placeholder="Rule" name="rule"  onChange={this.onChange} /></div>
+                <div className="field">
+                  <label>Status</label>
+                  <input type="text" placeholder="Status" name="status"  onChange={this.onChange} /></div>
+              </div>
+              <div className="field">
+                <label>Attached Groups</label>
+                <input type="text" placeholder="Attached Groups" name="groups"  onChange={this.onChange} />
+              </div>
+              <button className="ui button">Cancel</button>
+              <button className="ui button" type="submit">Submit</button>
+            </form>
+          </div>
+        </div></div>
+    </Modal >
+  );
 
   render() {
-    const modal = this.state.showModal ? (
-      <Modal>
-        <div className="ui dimmer modals page transition visible active">
-          <div className='ui fullscreen modal transition visible acitve'>
-            <div className="content">
-              <form className="ui form" onSubmit={this.onFormSubmit}>
-                <div className="field">
-                  <label>Name</label>
-                  <input type="text" placeholder="Name" ref={node => this.name = node} />
-                </div>
-                <div className="two fields">
-                  <div className="field">
-                    <label>Protocol</label>
-                    <input type="text" placeholder="Protocol" ref={node => this.protocol = node} /></div>
-                  <div className="field">
-                    <label>Port</label>
-                    <input type="text" placeholder="Port" ref={node => this.port = node} /></div>
-                </div>
-                <div className="two fields">
-                  <div className="field">
-                    <label>Rule</label>
-                    <input type="text" placeholder="Rule" ref={node => this.rule = node} /></div>
-                  <div className="field">
-                    <label>Status</label>
-                    <input type="text" placeholder="Status" ref={node => this.status = node} /></div>
-                </div>
-                <div className="field">
-                  <label>Attached Groups</label>
-                  <input type="text" placeholder="Attached Groups" ref={node => this.groups = node} />
-                </div>
-                <button className="ui button">Cancel</button>
-                <button className="ui button" type="submit">Submit</button>
-              </form>
-            </div>
-          </div></div>
-      </Modal >) : null;
-
-    const items = this.list.map(item =>
-      <tr>
-        <td>{item.name}</td>
-        <td>{item.protocol}</td>
-        <td>{item.port}</td>
-        <td>{item.rule}</td>
-        <td>{item.status}</td>
-        <td>{item.groups}</td>
-      </tr>
-    );
-
+    const { todos } = this.props;
+    const { sort, sortKey } = this.state;
+    let list = todos;
+    if(sort) {
+      console.log('huray! lets sort by', sortKey);
+      console.log('List before sorting', list);
+      list = todos.sort((a, b) => {
+        if(a[sortKey] > b[sortKey]) return 1;
+        if(a[sortKey] < b[sortKey]) return -1;
+        return 0;
+      });
+      console.log('List after sorting', list);
+    }
     return (
       <div className="ui container teal segment">
         <div className="ui grid equal width">
@@ -114,7 +113,7 @@ class App extends Component {
                 <i className="pencil alternate icon item" />
                 <i className="cog icon item" />
               </div>
-              <button className="ui blue button" onClick={this.onAddNew}>Add new</button>
+              <button className="ui blue button" onClick={this.toggleModal}>Add new</button>
             </div>
           </div>
         </div>
@@ -122,34 +121,43 @@ class App extends Component {
         <table className="ui striped sortable celled table">
           <thead>
             <tr>
-              <th onClick={this.props.sortList}>Name</th>
-              <th>Protocol</th>
-              <th>Port</th>
-              <th>Rule</th>
-              <th>Attached Groups</th>
-              <th>Status</th>
+              <th onClick={() => this.sortList('name')}>Name</th>
+              <th onClick={() => this.sortList('protocol')}>Protocol</th>
+              <th onClick={() => this.sortList('port')}>Port</th>
+              <th onClick={() => this.sortList('rule')}>Rule</th>
+              <th onClick={() => this.sortList('groups')}>Attached Groups</th>
+              <th onClick={() => this.sortList('status')}>Status</th>
             </tr>
           </thead>
           <tbody>
-            {items}
+            {
+              todos.map(item =>
+                <tr>
+                  <td>{item.name}</td>
+                  <td>{item.protocol}</td>
+                  <td>{item.port}</td>
+                  <td>{item.rule}</td>
+                  <td>{item.status}</td>
+                  <td>{item.groups}</td>
+                </tr>
+              )
+            }
           </tbody>
         </table>
-        {modal}
+        {!!this.state.showModal && this.renderModal()}
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    items: state.todos
-  };
-}
+const mapStateToProps = ({ todos }) => ({
+  todos,
+});
+
 const mapDispatchToProps = dispatch => {
   return {
     addItem: payload => dispatch(addTodo(payload)),
-    sortItems: () => dispatch(sortTodo())
   };
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
