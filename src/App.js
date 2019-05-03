@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Modal from './Modal';
-import { addTodo, sortTodo } from './redux/actions';
+import { addTodo } from './redux/actions';
 
 class App extends Component {
   state = {
-    text: '',
-    clicks: 0,
     showModal: false,
     name: null,
     protocol: null,
@@ -15,6 +13,8 @@ class App extends Component {
     status: null,
     groups: null,
     list: [],
+    sort: false,
+    sortKey: 'name',
   };
 
   onChange = (event) => {
@@ -32,10 +32,17 @@ class App extends Component {
     this.toggleModal();
   };
 
-  sortList = () => {
-    this.list = this.props.items;
-    const sortByKey = key => (a, b) => a[key] > b[key];
-    this.list = this.list.sort(sortByKey('name'))
+  sortList = (sortKey) => {
+    this.setState({
+      sort: true,
+      sortKey,
+    })
+  };
+
+  toggleModal = () => {
+    this.setState({
+      showModal: !this.state.showModal,
+    })
   };
 
   renderModal = () => (
@@ -76,14 +83,10 @@ class App extends Component {
     </Modal >
   );
 
-  toggleModal = () => {
-    this.setState({
-      showModal: !this.state.showModal,
-    })
-  };
-
   render() {
-
+    const { todos } = this.props;
+    const { sort, sortKey } = this.state;
+    const list = sort ? todos.sort((a, b) => a[sortKey] > b[sortKey]) : todos;
     return (
       <div className="ui container teal segment">
         <div className="ui grid equal width">
@@ -107,17 +110,17 @@ class App extends Component {
         <table className="ui striped sortable celled table">
           <thead>
             <tr>
-              <th onClick={() => {}}>Name</th>
-              <th>Protocol</th>
-              <th>Port</th>
-              <th>Rule</th>
-              <th>Attached Groups</th>
-              <th>Status</th>
+              <th onClick={() => this.sortList('name')}>Name</th>
+              <th onClick={() => this.sortList('protocol')}>Protocol</th>
+              <th onClick={() => this.sortList('port')}>Port</th>
+              <th onClick={() => this.sortList('rule')}>Rule</th>
+              <th onClick={() => this.sortList('groups')}>Attached Groups</th>
+              <th onClick={() => this.sortList('status')}>Status</th>
             </tr>
           </thead>
           <tbody>
             {
-              this.props.todos.map(item =>
+              list.map(item =>
                 <tr>
                   <td>{item.name}</td>
                   <td>{item.protocol}</td>

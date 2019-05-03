@@ -6,10 +6,6 @@ export const addTodo = payload => ({
   payload
 });
 
-export const sortTodo = () => ({
-  type: 'SORT_TODO'
-});
-
 export const setVisibilityFilter = filter => ({
   type: 'SET_VISIBILITY_FILTER',
   filter
