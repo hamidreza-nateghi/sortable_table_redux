@@ -16,6 +16,7 @@ class App extends Component {
   rule = null;
   status = null;
   groups = null;
+  list = [];
 
   onAddNew = () => {
     this.setState({ showModal: true });
@@ -41,6 +42,12 @@ class App extends Component {
       groups: this.groups.value
     });
     this.onIncrementClicks();
+  }
+
+  sortList = () => {
+    this.list = this.props.items;
+    const sortByKey = key => (a, b) => a[key] > b[key]
+    this.list = this.list.sort(sortByKey('name'))
   }
 
   render() {
@@ -81,7 +88,7 @@ class App extends Component {
           </div></div>
       </Modal >) : null;
 
-    const items = this.props.items.map(item =>
+    const items = this.list.map(item =>
       <tr>
         <td>{item.name}</td>
         <td>{item.protocol}</td>
@@ -115,7 +122,7 @@ class App extends Component {
         <table className="ui striped sortable celled table">
           <thead>
             <tr>
-              <th onClick={this.props.sortItems}>Name</th>
+              <th onClick={this.props.sortList}>Name</th>
               <th>Protocol</th>
               <th>Port</th>
               <th>Rule</th>
