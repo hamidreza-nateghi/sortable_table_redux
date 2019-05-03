@@ -15,24 +15,28 @@ const todos = (state = initialState, action) => {
           status: action.payload.status,
           groups: action.payload.groups
         }
-	// this would also work
-        // {
-        //   id: action.id,
-        //   ...action.payload,
-        // }
-      ]
+
+      ];
+      // You could also do like this
+      // return [
+      //   ...state,
+      //   {
+      //     id: action.id,
+      //     ...action.payload,
+      //   }
+      // ]
     case 'SORT_TODO':
       const sortByKey = key => (a, b) => a[key] > b[key]
-      return state.sort(sortByKey('name'))
+      return state.sort(sortByKey('name'));
     case 'TOGGLE_TODO':
       return state.map(todo =>
         (todo.id === action.id)
           ? { ...todo, completed: !todo.completed }
           : todo
-      )
+      );
     default:
       return state
   }
-}
+};
 
 export default todos

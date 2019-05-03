@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Modal from './Modal';
-import { addTodo, sortTodo } from './actions';
+import { addTodo, sortTodo } from './redux/actions';
 
 class App extends Component {
   state = {
