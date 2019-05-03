@@ -33,6 +33,7 @@ class App extends Component {
   };
 
   sortList = (sortKey) => {
+    console.log('Lets sort by', sortKey);
     this.setState({
       sort: true,
       sortKey,
@@ -86,7 +87,13 @@ class App extends Component {
   render() {
     const { todos } = this.props;
     const { sort, sortKey } = this.state;
-    const list = sort ? todos.sort((a, b) => a[sortKey] > b[sortKey]) : todos;
+    let list = todos;
+    if(sort) {
+      console.log('huray! lets sort by', sortKey);
+      console.log('List before sorting', list);
+      list = todos.sort((a, b) => a[sortKey] > b[sortKey]);
+      console.log('List after sorting', list);
+    }
     return (
       <div className="ui container teal segment">
         <div className="ui grid equal width">
