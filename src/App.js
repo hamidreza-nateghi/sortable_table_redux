@@ -91,7 +91,11 @@ class App extends Component {
     if(sort) {
       console.log('huray! lets sort by', sortKey);
       console.log('List before sorting', list);
-      list = todos.sort((a, b) => a[sortKey] > b[sortKey]);
+      list = todos.sort((a, b) => {
+        if(a[sortKey] > b[sortKey]) return 1;
+        if(a[sortKey] < b[sortKey]) return -1;
+        return 0;
+      });
       console.log('List after sorting', list);
     }
     return (
