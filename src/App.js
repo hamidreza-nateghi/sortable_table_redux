@@ -15,7 +15,7 @@ class App extends Component {
   port = null;
   rule = null;
   status = null;
-  groups = null;
+  groups = null;  // keep them in state, don't worry about rerendering
   list = [];
 
   onAddNew = () => {

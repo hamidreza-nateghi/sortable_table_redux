@@ -1,4 +1,7 @@
-const todos = (state = [], action) => {
+const initialState = [];
+// put initial state aside, sometimes it might be big, not just some empty array
+
+const todos = (state = initialState, action) => {
   switch (action.type) {
     case 'ADD_TODO':
       return [
@@ -12,6 +15,11 @@ const todos = (state = [], action) => {
           status: action.payload.status,
           groups: action.payload.groups
         }
+	// this would also work
+        // {
+        //   id: action.id,
+        //   ...action.payload,
+        // }
       ]
     case 'SORT_TODO':
       const sortByKey = key => (a, b) => a[key] > b[key]
