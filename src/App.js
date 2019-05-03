@@ -127,7 +127,7 @@ class App extends Component {
           </thead>
           <tbody>
             {
-              list.map(item =>
+              todos.map(item =>
                 <tr>
                   <td>{item.name}</td>
                   <td>{item.protocol}</td>
